@@ -36,6 +36,13 @@
                     required />
             </div>
 
+            <!-- isCommercial -->
+            <div class="mt-4">
+                <x-label for="isCommercial" :value="__('Are you a store?')" />
+                <x-input id="isCommercial" class="block mt-1" type="checkbox" name="isCommercial"
+                    :value="old('isCommercial')" />
+            </div>
+
             <!-- Password -->
             <div class="mt-4">
                 <x-label for="password" :value="__('Password')" />

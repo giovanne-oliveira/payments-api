@@ -14,9 +14,6 @@ class PayerAccountTransactionResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'user' => new UserTransactionResource($this->users),
-            'balance' => $this->balance
-        ];
+        return new UserTransactionResource($this->users);
     }
 }

@@ -29,11 +29,12 @@ class TransactionController extends Controller
     {
         try{
             return new TransactionResource($this->transactionRepository->createTransaction([
-                'payerId' => $request->payerId,
-                'payeeId' => $request->payeeId,
+                'payerId' => $request->payer,
+                'payeeId' => $request->payee,
                 'amount' => $request->amount
             ]));
         }catch(\Exception $e){
+            die(var_dump($e));
             return new JsonResponse([
                 'error' => $e->getMessage()
             ], $e->getCode());

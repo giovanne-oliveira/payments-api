@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class TransactionPostRequest extends FormRequest
 {
@@ -26,7 +28,16 @@ class TransactionPostRequest extends FormRequest
         return [
             'payer' => ['required', 'exists:users,id'],
             'payee' => ['required', 'exists:users,id', 'different:payer'],
-            'value' => ['required', 'min:0.01','numeric'],
+            'amount' => ['required', 'min:0.01', 'numeric'],
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'success'   => false,
+            'message'   => 'Validation errors',
+            'data'      => $validator->errors()
+        ]));
     }
 }

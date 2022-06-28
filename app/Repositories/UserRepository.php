@@ -6,30 +6,25 @@ use App\Models\User;
 
 class UserRepository
 {
-    public static $_CLIENT = 'client';
-    public static $_SHOPKEEPER = 'shopkeeper';
 
     public function __construct()
     {
-
     }
 
-    public function isShopkeeper($user_id):bool
+    public function isCommercial($userId): bool
     {
-        $user = User::find($user_id);
-        return $user->profile === self::$_SHOPKEEPER;
+        return User::find($userId)->isCommercial;
     }
 
-    public function verifyUserExists($user_id):bool
+    public function verifyUserExists($userId): bool
     {
-        $user = User::find($user_id);
-        return (bool) $user;
+        return (bool) User::find($userId);
     }
 
-    public function find($user_id):User
+    public function find($userId): User
     {
         try {
-            return User::find($user_id);
+            return User::find($userId);
         } catch (\Exception $exception) {
             return $exception;
         }

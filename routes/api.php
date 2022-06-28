@@ -19,7 +19,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('/transactions', [TransactionController::class, 'listAll']);
 
-Route::group(['prefix' => '/transactions'], function () {
-    Route::get('/', [TransactionController::class, 'listAll']);
+Route::group(['prefix' => '/transaction'], function () {
+    Route::post('/create', [TransactionController::class, 'create']);
+    Route::get('/{id}', [TransactionController::class, 'getById']);
+    Route::delete('/{id}', [TransactionController::class, 'delete']);
 });

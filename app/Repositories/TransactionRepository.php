@@ -43,7 +43,6 @@ class TransactionRepository
         if (!$this->verifyAuthorizeTransaction()) {
             throw new AuthorizeServiceUnavailableException('The authorization service is unavailable. Please try again later.', 503);
         }
-
         $payer = $this->userRepository->find($data['payerId']);
         $payee = $this->userRepository->find($data['payeeId']);
 

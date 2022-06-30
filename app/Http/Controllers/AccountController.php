@@ -38,4 +38,15 @@ class AccountController extends Controller
             ], $e->getCode());
         }
     }
+
+    public function activate(AccountPostRequest $request): AccountResource
+    {
+        try{
+            return new AccountResource($this->accountRepository->activateAccount($request->all()));
+        }catch(\Exception $e){
+            return new JsonResponse([
+                'error' => $e->getMessage()
+            ], $e->getCode());
+        }
+    }
 }

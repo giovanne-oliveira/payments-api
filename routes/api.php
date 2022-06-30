@@ -29,6 +29,7 @@ Route::group(['prefix' => '/transaction'], function () {
 });
 
 Route::group(['prefix' => '/account'], function () {
-    Route::get('/{id}', [AccountController::class, 'getById']);
+    Route::get('/info/{id}', [AccountController::class, 'getById']);
     Route::post('/create', [AccountController::class, 'create']);
+    Route::put('/activate/{id}', [AccountController::class, 'activate']);
 });

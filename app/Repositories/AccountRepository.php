@@ -17,9 +17,17 @@ class AccountRepository
             [
                 'userId' => $data['ownerId'],
                 'balance' => $data['initialBalance'],
-                'isActive' => 1
+                'isActive' => 0
             ]
         );
+    }
+
+    public function activateAccount(array $data): Account
+    {
+        $account = Account::find($data['accountId']);
+        $account->isActive = 1;
+        $account->save();
+        return $account;
     }
 
     public function deposit(Account $account, $value): void

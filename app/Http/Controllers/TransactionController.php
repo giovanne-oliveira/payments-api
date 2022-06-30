@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\TransactionPostRequest;
 use App\Http\Resources\TransactionCollection;
 use App\Http\Resources\TransactionResource;
-use App\Models\Transaction;
 use App\Repositories\TransactionRepository;
+use App\Models\Transaction;
 use Illuminate\Http\JsonResponse;
 
 class TransactionController extends Controller
@@ -38,6 +37,25 @@ class TransactionController extends Controller
             return new JsonResponse([
                 'error' => $e->getMessage()
             ], $e->getCode());
+        }
+    }
+
+    public function getById(Transaction $transaction): TransactionResource
+    {
+        try{
+            return new TransactionResource($transaction);
+        }catch (\Exception $exception){
+            return response()->json(["message" => $exception->getMessage()], 500);
+        }
+    }
+
+    public function delete(Transaction $transaction): JsonResponse
+    {
+        try {
+            $transaction->delete();
+            return response()->json(["message" => "Transaction deleted successfully"], 204);
+        } catch(\Exception $exception){
+            return response()->json(["message" => "Unexpected error occurred when deleting the transaction. Try again in a few seconds."], 500);
         }
     }
 }

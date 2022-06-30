@@ -28,4 +28,9 @@ class Account extends Model
     {
         return $this->belongsTo(User::class, 'userId');
     }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'userId')->first();
+    }
 }

@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\AccountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,4 +26,8 @@ Route::group(['prefix' => '/transaction'], function () {
     Route::post('/create', [TransactionController::class, 'create']);
     Route::get('/{id}', [TransactionController::class, 'getById']);
     Route::delete('/{id}', [TransactionController::class, 'delete']);
+});
+
+Route::group(['prefix' => '/account'], function () {
+    Route::get('/{id}', [AccountController::class, 'getById']);
 });

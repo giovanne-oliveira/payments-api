@@ -17,7 +17,7 @@ class UserTransactionResource extends JsonResource
         return [
             'name' => $this->name,
             'email' => $this->email,
-            'isCommercial' => $this->isCommercial
+            'is_store' => $this->is_store
         ];
     }
 }

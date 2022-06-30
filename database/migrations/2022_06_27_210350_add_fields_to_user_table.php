@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('isCommercial')->default(false);
-            $table->string('document')->after('isCommercial')->unique();
+            $table->boolean('is_store')->default(false);
+            $table->string('document')->after('is_store')->unique();
             $table->softDeletes();
         });
     }

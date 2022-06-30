@@ -23,7 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'isCommercial',
+        'is_store',
         'document'
     ];
 

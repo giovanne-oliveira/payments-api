@@ -11,9 +11,9 @@ class UserRepository
     {
     }
 
-    public function isCommercial($userId): bool
+    public function is_store($userId): bool
     {
-        return User::find($userId)->isCommercial;
+        return User::find($userId)->is_store;
     }
 
     public function verifyUserExists($userId): bool

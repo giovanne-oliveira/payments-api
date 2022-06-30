@@ -27,7 +27,7 @@ class ServiceTransactionValidate
 
     private function validatePayerIsCommercial($user)
     {
-        if ($this->userRepository->isCommercial($user)) {
+        if ($this->userRepository->is_store($user)) {
             throw new UserTypeNotAuthorizedException('This user is not allowed to make outbound transactions.', 401);
         }
     }

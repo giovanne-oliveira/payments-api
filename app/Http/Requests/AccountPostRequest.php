@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class TransactionPostRequest extends FormRequest
+class AccountPostRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,9 +27,8 @@ class TransactionPostRequest extends FormRequest
     public function rules()
     {
         return [
-            'payer' => ['required', 'exists:users,id'],
-            'payee' => ['required', 'exists:users,id', 'different:payer'],
-            'amount' => ['required', 'min:0.01', 'numeric'],
+            'ownerId' => ['required', 'exists:users,id'],
+            'initialBalance' => ['required', 'min:0.00', 'numeric'],
         ];
     }
 

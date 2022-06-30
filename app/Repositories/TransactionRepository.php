@@ -62,8 +62,8 @@ class TransactionRepository
         ];
         return DB::transaction(function () use($payer, $payee, $payload) {
             $transaction = Transaction::create($payload);
-            $this->accountRepository->removeCash($payer->account, $payload['amount']);
-            $this->accountRepository->addCash($payee->account, $payload['amount']);
+            $this->accountRepository->withdraw($payer->account, $payload['amount']);
+            $this->accountRepository->deposit($payee->account, $payload['amount']);
             return $transaction;
         });
     }

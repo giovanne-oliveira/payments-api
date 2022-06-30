@@ -11,14 +11,25 @@ class AccountRepository
 
     }
 
-    public function addCash(Account $account, $value): void
+    public function createAccount(array $data): Account
+    {
+        return Account::create(
+            [
+                'userId' => $data['ownerId'],
+                'balance' => $data['initialBalance'],
+                'isActive' => 1
+            ]
+        );
+    }
+
+    public function deposit(Account $account, $value): void
     {
         $account->update([
             'balance' => $account->balance + $value,
         ]);
     }
 
-    public function removeCash(Account $account, $value): void
+    public function withdraw(Account $account, $value): void
     {
         $account->update([
             'balance' => $account->balance - $value,

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TransactionDeleteRequest;
 use App\Http\Requests\TransactionPostRequest;
 use App\Http\Resources\TransactionCollection;
 use App\Http\Resources\TransactionResource;
@@ -49,11 +50,11 @@ class TransactionController extends Controller
         }
     }
 
-    public function delete(Transaction $transaction): JsonResponse
+    public function delete(TransactionDeleteRequest $request): JsonResponse
     {
         try {
-            $transaction->delete();
-            return response()->json(["message" => "Transaction deleted successfully"], 204);
+            $this->transactionRepository->deleteTransaction($request->transactionId);
+            return response()->json(["success" => true, "message" => "Transaction deleted successfully"], 200);
         } catch(\Exception $exception){
             return response()->json(["message" => "Unexpected error occurred when deleting the transaction. Try again in a few seconds."], 500);
         }

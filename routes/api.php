@@ -25,7 +25,7 @@ Route::get('/transactions', [TransactionController::class, 'listAll']);
 Route::group(['prefix' => '/transaction'], function () {
     Route::post('/create', [TransactionController::class, 'create']);
     Route::get('/{id}', [TransactionController::class, 'getById']);
-    Route::delete('/{id}', [TransactionController::class, 'delete']);
+    Route::delete('/{transactionId}', [TransactionController::class, 'delete']);
 });
 
 Route::group(['prefix' => '/account'], function () {

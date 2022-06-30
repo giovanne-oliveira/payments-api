@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\UuidPrimaryKey;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Account extends Model
 {
-    use HasFactory, UuidPrimaryKey;
+    use HasFactory, UuidPrimaryKey, SoftDeletes;
 
     public $incrementing = false;
 

@@ -53,6 +53,22 @@ class TransactionRepository
         return $transaction;
     }
 
+    public function deleteTransaction(string $id): bool
+    {
+        $transaction = Transaction::findOrFail($id);
+        $payload = [
+            'payer' => $transaction->accountPayer()->first(),
+            'payee' => $transaction->accountPayee()->first(),
+            'amount' => $transaction->amount
+        ];
+        DB::transaction(function () use($transaction, $payload) {
+            $this->accountRepository->withdraw($payload['payee'], $payload['amount']);
+            $this->accountRepository->deposit($payload['payer'], $payload['amount']);
+            $transaction->delete();
+        });
+        return true;
+    }
+
     public function makeTransaction($payer, $payee, $value): Transaction
     {
         $payload = [

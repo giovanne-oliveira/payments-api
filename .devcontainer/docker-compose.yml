@@ -34,7 +34,7 @@ services:
       - mariadb-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: mariadb
-      MYSQL_DATABASE: mariadb
+      MYSQL_DATABASE: payments-api
       MYSQL_USER: mariadb
       MYSQL_PASSWORD: mariadb
     # Add "forwardPorts": ["3306"] to **devcontainer.json** to forward MariaDB locally.

@@ -12,12 +12,12 @@ class TransactionTest extends TestCase
     public function test_user_can_send_money()
     {
         $person = $this->createUser([
-            'document' => 123456789,
+            'document' => 12345678900,
             'is_store' => false,
         ]);
 
         $store = $this->createUser([
-            'document' => 987654321,
+            'document' => 98765432100,
             'is_store' => true,
         ]);
 
@@ -34,14 +34,20 @@ class TransactionTest extends TestCase
         $this->setAccountBalance($person_account, 100);
         $this->setAccountBalance($store_account, 0);
 
-        $response = $this->createTransaction([
+        /*$response = $this->createTransaction([
             'payerId' => $person_account->id,
             'payeeId' => $store_account->id,
             'amount' => 50,
-        ]);
+        ]);*/
 
-        $this->assertTrue($response->exists());
-        $this->assertEquals(50, $person->fresh()->balance);
-        $this->assertEquals(50, $store->fresh()->balance);
+        $response = $this->post('/api/transaction/create', [
+            'payer' => $person->id,
+            'payee' => $store->id,
+            'amount' => 50,
+        ]);
+    
+        $this->assertTrue($response->status() == 201);
+        $this->assertEquals(50, $person->fresh()->account()->first()->balance);
+        $this->assertEquals(50, $store->fresh()->account()->first()->balance);
     }
 }

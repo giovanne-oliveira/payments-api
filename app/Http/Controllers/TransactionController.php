@@ -34,7 +34,6 @@ class TransactionController extends Controller
                 'amount' => $request->amount
             ]));
         }catch(\Exception $e){
-            die(var_dump($e));
             return new JsonResponse([
                 'error' => $e->getMessage()
             ], $e->getCode());

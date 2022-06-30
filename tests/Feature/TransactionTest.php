@@ -116,4 +116,44 @@ class TransactionTest extends TestCase
         $this->assertEquals(0, $person->fresh()->account()->first()->balance);
         $this->assertEquals(100, $store->fresh()->account()->first()->balance);
     }
+
+    public function test_revert_transaction()
+    {
+        $person = $this->createUser([
+            'document' => 12345678900,
+            'is_store' => false,
+        ]);
+
+        $store = $this->createUser([
+            'document' => 98765432100,
+            'is_store' => true,
+        ]);
+
+        $person_account = $this->createAccount([
+            'userId' => $person->id,
+            'isActive' => true
+        ]);
+
+        $store_account = $this->createAccount([
+            'userId' => $store->id,
+            'isActive' => true
+        ]);
+
+        $this->setAccountBalance($person_account, 100);
+        $this->setAccountBalance($store_account, 0);
+
+        $createTransactionResponse = $this->post('/api/transaction/create', [
+            'payer' => $person->id,
+            'payee' => $store->id,
+            'amount' => 50,
+        ]);
+
+        $transactionId = $createTransactionResponse->decodeResponseJson()['data']['id'];
+
+        $revertTransactionResponse = $this->delete('/api/transaction/'.$transactionId);
+
+        $this->assertTrue($revertTransactionResponse->status() == 200);
+        $this->assertEquals(100, $person->fresh()->account()->first()->balance);
+
+    }
 }

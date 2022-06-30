@@ -10,6 +10,7 @@ use App\Services\NotificationService;
 use App\Services\ServiceTransactionValidate;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\SendTransactionNotification;
 
 class TransactionRepository
 {
@@ -48,8 +49,11 @@ class TransactionRepository
 
         $transaction = $this->makeTransaction($payer, $payee, $data['amount']);
 
-        $this->sendNotification();
-
+        if(env('USE_ASYNC_NOTIFICATION_SERVICE')) {
+            SendTransactionNotification::dispatch($transaction);
+        }else{
+            $this->sendNotification();
+        }
         return $transaction;
     }
 

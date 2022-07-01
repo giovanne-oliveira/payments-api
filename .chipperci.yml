@@ -5,7 +5,7 @@ environment:
   php: 8.1    # 7.1, 7.2, 7.3, 7.4, 8.0, 8.1
   node: 16    # 6, 8, 10, 12, 14, 16
 
-#services:
+services:
   - mysql: 5.7
 
 pipeline:

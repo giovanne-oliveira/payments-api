@@ -1,64 +1,179 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Payments API
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este projeto é um exemplo de implementação de uma API para gerenciar contas financeiras e executar transações entre estas contas, semelhante à um sistema de pagamentos ou um sistema bancário.
 
-## About Laravel
+## Sobre
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Requisitos:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+ - PHP
+ - MySQL
+ - Redis
+ - Composer
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Premissas:
 
-## Learning Laravel
+-   Para ambos tipos de usuário, precisamos do Nome Completo, CPF, e-mail e Senha. CPF/CNPJ e e-mails devem ser únicos no sistema. Sendo assim, seu sistema deve permitir apenas um cadastro com o mesmo CPF ou endereço de e-mail.
+    
+-   Usuários podem enviar dinheiro (efetuar transferência) para lojistas e entre usuários.
+    
+-   Lojistas  **só recebem**  transferências, não enviam dinheiro para ninguém.
+    
+-   Validar se o usuário tem saldo antes da transferência.
+    
+-   Antes de finalizar a transferência, deve-se consultar um serviço autorizador externo, use este mock para simular ([https://run.mocky.io/v3/8fafdd68-a090-496f-8c9a-3442cf30dae6](https://run.mocky.io/v3/8fafdd68-a090-496f-8c9a-3442cf30dae6)).
+    
+-   A operação de transferência deve ser uma transação (ou seja, revertida em qualquer caso de inconsistência) e o dinheiro deve voltar para a carteira do usuário que envia.
+    
+-   No recebimento de pagamento, o usuário ou lojista precisa receber notificação (envio de email, sms) enviada por um serviço de terceiro e eventualmente este serviço pode estar indisponível/instável. Use este mock para simular o envio ([http://o4d9z.mocklab.io/notify](http://o4d9z.mocklab.io/notify)).
+    
+-   Este serviço deve ser RESTFul.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Instalação
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. Primeiro clone o projeto:
+	```bash
+	git clone https://github.com/giovanne-oliveira/payments-api.git
+	```
+2. Instale as dependências utilizando o Composer
+	```bash
+	composer install
+	```
+3. Copie o arquivo de ambiente exemplo 
+	```bash
+	cp .env.example .env
+	```
+4. Preencha os arquivo de ambiente com os dados do banco de dados e do Redis
+	```
+	DB_CONNECTION=mysql
+	DB_HOST=127.0.0.1
+	DB_PORT=3306
+	DB_DATABASE=test
+	DB_USERNAME=root
+	DB_PASSWORD=password
+	QUEUE_CONNECTION=redis
+	REDIS_HOST=127.0.0.1
+	REDIS_PASSWORD=null
+	REDIS_PORT=6379
+	```
+5. Gere a chave de criptografia do Laravel
+	```bash
+	php artisan key:generate
+	```
+6. Importe as tabelas para o banco de dados
+	```bash
+	php artisan migrate
+	```
+7. Configure o ambiente de filas utilizando o Horizon e o Supervisor, conforme demonstrado na [documentação oficial](https://laravel.com/docs/9.x/horizon#installing-supervisor)
 
-## Laravel Sponsors
+## Endpoints
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+#### Headers
+Esta aplicação aceitará payloads do tipo `application/json`
 
-### Premium Partners
+### Criar uma transação
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+ - Método: POST
+ - Endpoint: /api/transaction/create
+ - Body:
+	```json
+	{
+		"payee": {{PAYEE_USER_ID}},
+		"payer": {{PAYER_USER_ID}},
+		"amount": {{TRANSACTION_AMOUNT}}
+	}
+	``` 
+- Variáveis:
+	PAYEE_USER_ID: ID do usuário que receberá a transferência. Usuário recebedor.
+	PAYER_USER_ID: ID do usuário que emitirá a transferência. Usuário pagador.
+	TRANSACTION_AMOUNT: Valor da transferência, expressado em formato double.
 
-## Contributing
+- Retorno esperado (HTTP 201):
+	```json
+	{
+		"data": {
+			"id": "b38e7671-a3ff-4ec2-a535-6e60c06fa3b3",
+			"amount": 10,
+			"created_at": "2022-07-01T19:21:13.000000Z",
+			"payer": {
+				"name": "Giovanne Oliveira",
+				"email": "tyra.feest@example.org",
+				"is_store": 0
+			},
+			"payee": {
+				"name": "Super Cool Store",
+				"email": "dgoldner@example.com",
+				"is_store": 1
+			}
+		}
+	}
+	```
+### Listar transações
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+ - Método: GET
+ - Endpoint: /api/transactions
+ - Body: nenhum
+ - Retorno espero (HTTP 200):
+	```json
+	{
+		"data": {
+			"transactions": [
+				{
+					"id": "b38e7671-a3ff-4ec2-a535-6e60c06fa3b3",
+					"amount": "10.00",
+					"created_at": "2022-07-01T19:21:13.000000Z",
+					"payer": {
+						"name": "Giovanne Oliveira",
+						"email": "tyra.feest@example.org",
+						"is_store": 0
+					},
+					"payee": {
+						"name": "Super Cool Store",
+						"email": "dgoldner@example.com",
+						"is_store": 1
+					}
+				}
+			]
+		}
+	}
+	```
+### Consultar saldo de uma conta
+ - Método: GET
+ - Endpoint: /api/account/info/{{ACCOUNT_ID}}
+ - Body: Nenhum
+- Variáveis: 
+	**ACCOUNT_ID:** ID da conta a ser consultada.
+- Retorno esperado (HTTP 200):
+	```json
+	{
+		"data": {
+		"accountId": "ca2a7756-bdcd-4633-8d53-878a85298ce7",
+		"accountOwner": {
+			"name": "Giovanne Oliveira",
+			"email": "tyra.feest@example.org",
+			"is_store": 0
+		},
+		"isActive": 1,
+		"balance": "90.00"
+		}
+	}
+	```
+### Reverter uma transação
+- Método: DELETE
+ - Endpoint: /api/transaction/{{TRANSACTION_ID}}
+ - Body: Nenhum
+ - Variáveis:
+	 **TRANSACTION_ID:** ID da transação. Pode ser obtido no retorno da chamada de criação da transação, na propriedade **id**
+- Retorno esperado (HTTP 200):
+	```json
+	{
+		"success": true,
+		"message": "Transaction deleted successfully"
+	}
+	```
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Testes
+Este projeto possui testes unitários, validando os os pontos de premissa do projeto. A testagem pode ser feita através do framework Pest, executando o comando abaixo:
+```bash
+./vendor/bin/pest
+```

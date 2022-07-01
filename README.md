@@ -1,4 +1,5 @@
 # Payments API
+![Build Status](https://app.chipperci.com/projects/a813f773-6f07-4e4a-941c-82991466da7a/status/main)
 
 Este projeto é um exemplo de implementação de uma API para gerenciar contas financeiras e executar transações entre estas contas, semelhante à um sistema de pagamentos ou um sistema bancário.
 
